@@ -1,0 +1,27 @@
+Given: er (Kunde) og (Har konto tilknyttet),
+When: vil indsætte (beløb) til (Konto),
+Then: Indsætte (Beløb) i (Konto)
+
+Given: (er Kunde) og (har konto) eller (er ansat),
+When: (Penge på Konto) < (Beløb trukket) og (vil trække beløb),
+Then: Anullere (vil trække beløb)
+When: (Penge på Konto) > (Beløb trukket) og (vil trække beløb),
+Then: (Hæve beløb)
+
+Given: (er Kunde) og (har Konto),
+When: (vil have Konto Udskrift),
+Then: get hver (Trasaktion) og tilføje til (Konto udskrift)
+
+Given: (er ansat) og (Kunde1 har Konto) og (Kunde2 har Konto),
+When: (vil overføre beløb) fra (Kunde1) til (Kunde2) og (beløb på Kunde1 Konto) < (Beløb trukket),
+Then: Anullere (flytning),
+When: (vil overføre beløb) fra (Kunde1) til (Kunde2) og (beløb på Kunde1 Konto) > (Belob trukket),
+Then: flytte (Beløb) fra (Kunde1 Konto) til (Kunde2 Konto),
+
+Given: (er ansat),
+When: (vil se liste) af (Kunder),
+Then: sort (KundeListe) efter (Navn), vise (KundeListe),
+
+Given: (er ansat),
+When: (vil se Liste) af (Konto),
+Then: sort (KontoListe) efter (beløb størrelse), vise (KontoListe),
