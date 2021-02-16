@@ -3,7 +3,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Account {
-    int sum = 0;
+
     List<Transaction>transactions;
     Customer customer;
 
@@ -21,7 +21,7 @@ public class Account {
     }
 
     public int getBalance(){
-        // TODO: return sum of the transactions
+        int sum= 0;
         for (Transaction transaction : transactions) {
             sum += transaction.getAmount();
         }
@@ -31,21 +31,26 @@ public class Account {
     public int withdrawAmount(int amount){
         try {
             if (amount <= getBalance())
-                sum=getBalance()-amount;
-            transactions.add(new Transaction(amount, new Date()));
+                transactions.add(new Transaction(Math.abs(amount)*-1, new Date()));
 
         }
         catch (IndexOutOfBoundsException e){
             System.out.println("Amount is bigger than the account balance");
             e.printStackTrace();
         }
-        return 0;
+        return getBalance();
     }
 
     public int depositAmount(int amount){
-        // TODO: skal debugges og returnere ny saldo. Smid fejl hvis amount < 0.
-        transactions.add(new Transaction(amount, new Date()));
-        return 0;
-
-    }
+        if (amount > 0) {
+            transactions.add(new Transaction(amount, new Date()));
+            } else
+                try {
+                    throw new IndexOutOfBoundsException("Amount less than 0");
+                }catch (IndexOutOfBoundsException e) {
+                    System.out.println("Amount is less or equal to 0");
+                    e.printStackTrace();
+        }
+        return getBalance();
+          }
 }
