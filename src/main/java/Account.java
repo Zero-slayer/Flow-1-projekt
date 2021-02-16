@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Account {
@@ -7,8 +8,8 @@ public class Account {
     Customer customer;
 
     public Account(Customer customer){
-       this.transactions = new ArrayList<>();
-       this.customer = customer;
+        this.transactions = new ArrayList<>();
+        this.customer = customer;
     }
 
     public List<Transaction> getTransactions() {
@@ -20,15 +21,36 @@ public class Account {
     }
 
     public int getBalance(){
-        // TODO: return sum of the transactions
-        return 0;
+        int sum= 0;
+        for (Transaction transaction : transactions) {
+            sum += transaction.getAmount();
+        }
+        return sum;
     }
 
-    public void withdrawAmount(){
-        // TODO: make it so you can't withdraw more than the balance
+    public int withdrawAmount(int amount){
+        try {
+            if (amount <= getBalance())
+                transactions.add(new Transaction(Math.abs(amount)*-1, new Date()));
+
+        }
+        catch (IndexOutOfBoundsException e){
+            System.out.println("Amount is bigger than the account balance");
+            e.printStackTrace();
+        }
+        return getBalance();
     }
 
-    public void depositAmount(){
-
-    }
+    public int depositAmount(int amount){
+        if (amount > 0) {
+            transactions.add(new Transaction(amount, new Date()));
+            } else
+                try {
+                    throw new IndexOutOfBoundsException("Amount less than 0");
+                }catch (IndexOutOfBoundsException e) {
+                    System.out.println("Amount is less or equal to 0");
+                    e.printStackTrace();
+        }
+        return getBalance();
+          }
 }
