@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
         CustomerList.add(new Customer("Jon"));
         CustomerList.add(new Customer("Andrew"));
+        CustomerList.add(new Customer("Dan"));
         for (Customer t : CustomerList){
             accountList.add(new Account(t));
         }
@@ -36,17 +37,33 @@ public class Main {
             Customer cSel;
             Account aSel = null;
             String nm = sc.nextLine();
-            for(int i = CustomerList.size()-1; i >= 0; i--){
-                if(CustomerList.get(i).getName().equals(nm) && !nm.equals("")){
-                    cSel = CustomerList.get(i);
+            ArrayList<String> customNames = new ArrayList<>();
+            for(Customer temp : CustomerList){
+                customNames.add(temp.getName());
+            }
+            if(customNames.contains(nm)){
+                for (Customer c : CustomerList){
+                    cSel = c;
+                    isCustomer = true;
+                    for (Account a : accountList){
+                        if(a.customer == cSel){
+                            aSel = a;
+                        }
+                    }
+                }
+            }else if(!nm.equals("")){
+                System.out.println(nm + " is not a Customer, returning...");
+            }
+            /*for(Customer c : CustomerList){
+                if(){
+                    cSel = c;
                     isCustomer = true;
                     for(Account a : accountList){
                         if(a.customer == cSel){
                             aSel = a;
                         }
                     }
-                    break;
-                }else if(!nm.equals("")){
+                }else{
                     System.out.println(nm + " is not a customer, Returning...");
                 }
                 // ignore spaghetti attempt to add new customer, will fix later
@@ -63,8 +80,8 @@ public class Main {
                     }else{
                         System.out.println("Not a valid input");
                     }
-                }*/
-            }
+                }
+            }*/
             while (isCustomer){
                 System.out.println("Select mode");
                 System.out.println("1: Input amount");
@@ -106,7 +123,7 @@ public class Main {
 
                     case (5):
                         System.out.println("Showing Customers:");
-                        List<String> customList = null;
+                        ArrayList<String> customList = new ArrayList<>();
                         for (Customer customer : CustomerList) {
                             customList.add(customer.getName());
                             Collections.sort(customList);
