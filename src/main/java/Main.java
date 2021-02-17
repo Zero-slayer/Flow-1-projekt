@@ -3,6 +3,8 @@
     -Add remove customer + account
 */
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -47,6 +49,7 @@ public class Main {
                 }else if(!nm.equals("")){
                     System.out.println(nm + " is not a customer, Returning...");
                 }
+                // ignore spaghetti attempt to add new customer, will fix later
                 /*else if(!nm.equals("")){
                     System.out.println(nm + " Is not a Customer, do you want to add as new customer?");
                     String confirm = sc.nextLine();
@@ -61,7 +64,6 @@ public class Main {
                         System.out.println("Not a valid input");
                     }
                 }*/
-                // ignore spaghetti attempt to add new customer, will fix later
             }
             while (isCustomer){
                 System.out.println("Select mode");
@@ -69,8 +71,9 @@ public class Main {
                 System.out.println("2: Remove amount");
                 System.out.println("3: Show balance");
                 System.out.println("4: Print all transactions");
-                System.out.println("5: Change selected Customer");
-                System.out.println("6: Exit");
+                System.out.println("5: Show all customers");
+                System.out.println("6: Change selected Customer");
+                System.out.println("7: Exit");
                 input = sc.nextInt();
                 assert aSel != null;
                 switch (input){
@@ -102,10 +105,22 @@ public class Main {
                         break;
 
                     case (5):
-                        isCustomer = false;
+                        System.out.println("Showing Customers:");
+                        List<String> customList = null;
+                        for (Customer customer : CustomerList) {
+                            customList.add(customer.getName());
+                            Collections.sort(customList);
+                        }
+                        for (String s : customList){
+                            System.out.println(s);
+                        }
                         break;
 
                     case (6):
+                        isCustomer = false;
+                        break;
+
+                    case (7):
                         isCustomer = false;
                         active = false;
                         break;
