@@ -11,6 +11,7 @@ class JDBC_DB_CONNECTIONTest {
     private String db_user;
     private String db_password;
     private JDBC_DB_CONNECTION connection = null;
+    private JDBC_DB_BANK bank;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -41,5 +42,17 @@ class JDBC_DB_CONNECTIONTest {
     @Test
     void getBalance() throws Exception {
             connection.getBalance();
+    }
+
+    @Test
+    void createBank() throws Exception {
+        bank = new JDBC_DB_BANK(1, "test bank", "Aarhus", connection);
+    }
+
+    @Test
+    void createCustomer() throws Exception {
+        createBank();
+        JDBC_DB_CUSTOMER customer = new JDBC_DB_CUSTOMER("Lars", "Oddense", bank);
+        connection.createCustomer(customer);
     }
 }
