@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `account`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `account` (
-  `idAccount` int NOT NULL,
+  `idAccount` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`idAccount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -71,13 +71,15 @@ DROP TABLE IF EXISTS `customer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer` (
-  `idCustomer` int NOT NULL,
+  `idCustomer` int NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) NOT NULL,
   `City` varchar(45) NOT NULL,
-  `idBank` int DEFAULT NULL,
+  `idBank` int NOT NULL,
   PRIMARY KEY (`idCustomer`),
+  UNIQUE KEY `idCustomer_UNIQUE` (`idCustomer`),
+  UNIQUE KEY `idBank_UNIQUE` (`idBank`),
   KEY `fk_idBank_idx` (`idBank`),
-  CONSTRAINT `fk_idBank` FOREIGN KEY (`idBank`) REFERENCES `bank` (`idBank`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `fk_idBank` FOREIGN KEY (`idBank`) REFERENCES `bank` (`idBank`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -98,13 +100,13 @@ DROP TABLE IF EXISTS `transaction`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `transaction` (
-  `idTransaction` int NOT NULL,
+  `idTransaction` int NOT NULL AUTO_INCREMENT,
   `Amount` int NOT NULL,
   `Date` datetime NOT NULL,
   `idAccount` int NOT NULL,
   PRIMARY KEY (`idTransaction`),
-  KEY `fk_transaction_account1_idx` (`idAccount`),
-  CONSTRAINT `fk_transaction_account1` FOREIGN KEY (`idAccount`) REFERENCES `account` (`idAccount`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  KEY `fk_idAccount_idx` (`idAccount`),
+  CONSTRAINT `fk_idAccount` FOREIGN KEY (`idAccount`) REFERENCES `account` (`idAccount`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -126,4 +128,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-16 10:30:13
+-- Dump completed on 2021-02-17 10:44:25
