@@ -84,8 +84,8 @@ public class Main {
             }*/
             while (isCustomer){
                 System.out.println("Select mode");
-                System.out.println("1: Input amount");
-                System.out.println("2: Remove amount");
+                System.out.println("1: Deposit amount");
+                System.out.println("2: Withdraw amount");
                 System.out.println("3: Show balance");
                 System.out.println("4: Print all transactions");
                 System.out.println("5: Show all customers");
