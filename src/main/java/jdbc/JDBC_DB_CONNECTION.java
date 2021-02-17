@@ -2,6 +2,7 @@ package jdbc;
 
 import java.sql.*;
 import java.util.Calendar;
+import java.util.Scanner;
 
 public class JDBC_DB_CONNECTION implements AutoCloseable{
 
@@ -26,6 +27,20 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         connection.close();
     }
 
+    public String username()
+    {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter username: ");
+        return input.nextLine();
+    }
+
+    public String password()
+    {
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter password: ");
+        return input.nextLine();
+    }
+
     public void depositAmount(int amount) throws Exception{
         if (amount < 0) {
             try {
@@ -36,7 +51,9 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
         ps_newTransaction.setInt(1, amount);
         ps_newTransaction.setDate(2, new java.sql.Date(cal.getTimeInMillis()));
-        ps_newTransaction.executeQuery();
+        if (ps_newTransaction.executeUpdate() != 1) {
+            throw new Exception("Could not deposit amount");
+        }
     }
 
     public void withDrawAmount(int amount) throws Exception {
@@ -49,7 +66,9 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
         ps_newTransaction.setInt(1, (Math.abs(amount) * -1));
         ps_newTransaction.setDate(2, new java.sql.Date(cal.getTimeInMillis()));
-        ps_newTransaction.executeQuery();
+        if (ps_newTransaction.executeUpdate() != 1) {
+            throw new Exception("Could not withdraw amount");
+        }
     }
 
     public int getBalance() throws Exception {
