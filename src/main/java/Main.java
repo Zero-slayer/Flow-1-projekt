@@ -100,12 +100,10 @@ public class Main {
                         for(Account a : accountList){
                             map.put(a.getCustomer().getName(), a.getBalance());
                         }
+                        
                         List<Map.Entry<String, Integer>> list = new LinkedList<>(map.entrySet());
                         list.sort(Map.Entry.comparingByValue());
-                        HashMap<String, Integer> temp = new LinkedHashMap<>();
-                        for(Map.Entry<String, Integer> aa : list){
-                            temp.put(aa.getKey(), aa.getValue());
-                        }
+
                         for(Map.Entry<String, Integer> en : map.entrySet()){
                             System.out.println(en.getKey() + " : " + en.getValue());
                         }
