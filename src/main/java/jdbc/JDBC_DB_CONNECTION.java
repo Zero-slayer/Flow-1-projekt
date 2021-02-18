@@ -18,6 +18,9 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
     private PreparedStatement ps_getBankId;
     private PreparedStatement ps_createBank;
     private PreparedStatement ps_createCustomer;
+    private PreparedStatement ps_getCustomerId;
+    private PreparedStatement ps_createAccount;
+    private PreparedStatement ps_getAccountId;
 
     public JDBC_DB_CONNECTION(String db_url, String db_user, String db_password) throws SQLException {
         this.db_url = db_url;
@@ -31,21 +34,21 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         connection.close();
     }
 
-    public String username()
+    public static String username()
     {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter username: ");
         return input.nextLine();
     }
 
-    public String password()
+    public static String password()
     {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter password: ");
         return input.nextLine();
     }
 
-    public void depositAmount(int amount) throws Exception{
+    public void depositAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception{
         if (amount < 0) {
             try {
                 throw new Exception("Cannot deposit less than 0");
@@ -55,12 +58,13 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
         ps_newTransaction.setInt(1, amount);
         ps_newTransaction.setDate(2, new java.sql.Date(cal.getTimeInMillis()));
+        ps_newTransaction.setInt(3, getAccountId(customer));
         if (ps_newTransaction.executeUpdate() != 1) {
             throw new Exception("Could not deposit amount");
         }
     }
 
-    public void withDrawAmount(int amount) throws Exception {
+    public void withDrawAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception {
         if (Math.abs(amount) > getBalance()) {
             try {
                 throw new Exception(String.format("Cannot withdraw more than %d", getBalance()));
@@ -70,6 +74,7 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
         ps_newTransaction.setInt(1, (Math.abs(amount) * -1));
         ps_newTransaction.setDate(2, new java.sql.Date(cal.getTimeInMillis()));
+        ps_newTransaction.setInt(3, getAccountId(customer));
         if (ps_newTransaction.executeUpdate() != 1) {
             throw new Exception("Could not withdraw amount");
         }
@@ -119,16 +124,56 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
     }
 
+
+    public int getCustomerId(JDBC_DB_CUSTOMER customer) throws Exception {
+        ps_getCustomerId.setString(1, customer.getName());
+        ps_getCustomerId.setString(2, customer.getCity());
+        ps_getCustomerId.setInt(3, customer.getBankId());
+        try (ResultSet rs = ps_getCustomerId.executeQuery()) {
+            int val = -1;
+            while(rs.next()) {
+                val = rs.getInt(1);
+            }
+            return val;
+        } catch (SQLException e) {
+            throw new Exception(e);
+        }
+    }
+
+    public int getAccountId(JDBC_DB_CUSTOMER customer) throws Exception {
+        ps_getAccountId.setInt(1, getCustomerId(customer));
+        try (ResultSet rs = ps_getAccountId.executeQuery()) {
+           int val = -1;
+           while (rs.next()) {
+               val = rs.getInt(1);
+           }
+           return val;
+        } catch (SQLException e) {
+           throw new Exception(e);
+        }
+    }
+
+    public void createAccount(JDBC_DB_CUSTOMER customer) throws Exception {
+        ps_createAccount.setInt(1, getCustomerId(customer));
+        if (ps_createAccount.executeUpdate() != 1) {
+            throw new Exception("Could not create account");
+        }
+    }
+
     private void prepareConnection() throws SQLException {
         connection = DriverManager.getConnection(db_url, db_user, db_password);
         ps_newTransaction = connection.prepareStatement("INSERT INTO bank.transaction " +
-                "(Amount, Date) VALUES (?,?)");
+                "(Amount, Date, idAccount) VALUES (?,?,?)");
         ps_getBalance = connection.prepareStatement("SELECT SUM(Amount) FROM bank.transaction");
         ps_getBankId = connection.prepareStatement("SELECT idBank FROM bank.bank WHERE idBank = ?");
         ps_createBank = connection.prepareStatement("INSERT INTO bank.bank " +
                 "(idBank, Name, City) VALUES (?,?,?)");
         ps_createCustomer = connection.prepareStatement("INSERT INTO bank.customer " +
                     "(Name, City, idBank) VALUES (?,?,?)");
+        ps_getCustomerId = connection.prepareStatement("SELECT idCustomer FROM bank.customer " +
+                "WHERE bank.customer.Name = ? and bank.customer.City = ? and bank.customer.idBank = ?");
+        ps_createAccount = connection.prepareStatement("INSERT INTO bank.account " +
+                "(idCustomer) VALUES (?)");
+        ps_getAccountId = connection.prepareStatement("SELECT idAccount FROM bank.account WHERE bank.account.idCustomer = ?");
     }
-
 }

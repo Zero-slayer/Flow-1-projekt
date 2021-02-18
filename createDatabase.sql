@@ -26,7 +26,10 @@ DROP TABLE IF EXISTS `account`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `account` (
   `idAccount` int NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`idAccount`)
+  `idCustomer` int NOT NULL,
+  PRIMARY KEY (`idAccount`),
+  KEY `fk_idCustomer_idx` (`idCustomer`) /*!80000 INVISIBLE */,
+  CONSTRAINT `fk_idCustomer` FOREIGN KEY (`idCustomer`) REFERENCES `customer` (`idCustomer`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -128,4 +131,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-17 10:44:25
+-- Dump completed on 2021-02-18 11:56:36

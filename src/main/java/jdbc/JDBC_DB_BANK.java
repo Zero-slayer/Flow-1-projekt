@@ -34,4 +34,8 @@ public class JDBC_DB_BANK {
     public String getCity() {
         return city;
     }
+
+    public JDBC_DB_CONNECTION getConnection() {
+        return connection;
+    }
 }
