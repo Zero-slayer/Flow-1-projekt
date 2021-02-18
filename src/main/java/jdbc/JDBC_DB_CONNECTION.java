@@ -21,6 +21,7 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
     private PreparedStatement ps_getCustomerId;
     private PreparedStatement ps_createAccount;
     private PreparedStatement ps_getAccountId;
+    private PreparedStatement ps_getTransactions;
 
     public JDBC_DB_CONNECTION(String db_url, String db_user, String db_password) throws SQLException {
         this.db_url = db_url;
@@ -48,7 +49,7 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         return input.nextLine();
     }
 
-    public void depositAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception{
+    public int depositAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception{
         if (amount < 0) {
             try {
                 throw new Exception("Cannot deposit less than 0");
@@ -62,9 +63,10 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         if (ps_newTransaction.executeUpdate() != 1) {
             throw new Exception("Could not deposit amount");
         }
+        return amount;
     }
 
-    public void withDrawAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception {
+    public int withDrawAmount(int amount, JDBC_DB_CUSTOMER customer) throws Exception {
         if (Math.abs(amount) > getBalance()) {
             try {
                 throw new Exception(String.format("Cannot withdraw more than %d", getBalance()));
@@ -78,6 +80,7 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         if (ps_newTransaction.executeUpdate() != 1) {
             throw new Exception("Could not withdraw amount");
         }
+        return Math.abs(amount) * -1;
     }
 
     public int getBalance() throws Exception {
@@ -153,6 +156,23 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         }
     }
 
+    public ArrayList<String> getTransactions() throws Exception {
+
+        ArrayList<String> returnVal = new ArrayList<>();
+        int id = -1;
+        int amount = -1;
+        String Date = " ";
+
+        try (ResultSet rs = ps_getTransactions.executeQuery()) {
+            while (rs.next()) {
+                returnVal.add((id = rs.getInt(1)) + " " + (amount = rs.getInt(2)) + " " + (Date = String.valueOf(rs.getDate(3, cal))));
+            }
+        } catch (SQLException e) {
+            throw new Exception(e);
+        }
+        return returnVal;
+    }
+
     public void createAccount(JDBC_DB_CUSTOMER customer) throws Exception {
         ps_createAccount.setInt(1, getCustomerId(customer));
         if (ps_createAccount.executeUpdate() != 1) {
@@ -175,5 +195,6 @@ public class JDBC_DB_CONNECTION implements AutoCloseable{
         ps_createAccount = connection.prepareStatement("INSERT INTO bank.account " +
                 "(idCustomer) VALUES (?)");
         ps_getAccountId = connection.prepareStatement("SELECT idAccount FROM bank.account WHERE bank.account.idCustomer = ?");
+        ps_getTransactions = connection.prepareStatement("SELECT bank.transaction.idTransaction, bank.transaction.Amount, bank.transaction.Date FROM bank.transaction");
     }
 }

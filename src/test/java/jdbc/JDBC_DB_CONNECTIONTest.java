@@ -13,6 +13,7 @@ class JDBC_DB_CONNECTIONTest {
     private JDBC_DB_CONNECTION connection = null;
     private JDBC_DB_BANK bank;
     private JDBC_DB_CUSTOMER customer;
+    private JDBC_DB_ACCOUNT account;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -37,14 +38,14 @@ class JDBC_DB_CONNECTIONTest {
     @Test
     void createAccount() throws Exception {
         createCustomer();
-        JDBC_DB_ACCOUNT account = new JDBC_DB_ACCOUNT(customer);
+        account = new JDBC_DB_ACCOUNT(customer);
     }
 
     @Test
     void depositAmount() throws Exception {
         createAccount();
-        connection.depositAmount(100, customer);
-        connection.depositAmount(120, customer);
+        account.depositAmount(100);
+        account.depositAmount(120);
 //        int expected = 220;
 //        int actual = connection.getBalance();
 //        assertEquals(expected, actual);
@@ -53,15 +54,15 @@ class JDBC_DB_CONNECTIONTest {
     @Test
     void withDrawAmount() throws Exception {
         depositAmount();
-        connection.withDrawAmount(80, customer);
+        account.withdrawAmount(80);
     }
 
     @Test
     void getBalance() throws Exception {
         withDrawAmount();
         int expected = 140;
-        int actual = connection.getBalance();
+        int actual = account.getBalance();
         assertEquals(expected, actual);
-        System.out.println(connection.getBalance());
+        System.out.println(account.getBalance());
     }
 }
